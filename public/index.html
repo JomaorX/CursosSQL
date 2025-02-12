@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Cursos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Listado de Cursos</h1>
+    <ul id="cursos"></ul>
+
+    <h2>Estadísticas de Aprobados</h2>
+    <canvas id="graficoAprobados"></canvas>
+
+    <script>
+        async function cargarCursos() {
+            const respuesta = await fetch('http://localhost:3000/cursos');
+            const cursos = await respuesta.json();
+            const listaCursos = document.getElementById('cursos');
+            listaCursos.innerHTML = cursos.map(curso => `<li>${curso.nombre} - ${curso.lugar}</li>`).join('');
+        }
+
+        async function cargarGrafico() {
+            const respuesta = await fetch('http://localhost:3000/estadisticas');
+            const datos = await respuesta.json();
+
+            const etiquetas = datos.map(item => item.nombre);
+            const aprobados = datos.map(item => item.aprobados);
+            const total = datos.map(item => item.total);
+
+            new Chart(document.getElementById('graficoAprobados'), {
+                type: 'bar',
+                data: {
+                    labels: etiquetas,
+                    datasets: [
+                        { label: 'Aprobados', data: aprobados, backgroundColor: 'green' },
+                        { label: 'Total', data: total, backgroundColor: 'blue' }
+                    ]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        cargarCursos();
+        cargarGrafico();
+    </script>
+</body>
+</html>
