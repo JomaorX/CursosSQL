@@ -18,15 +18,28 @@
     </nav>
     
     <h1>Estadísticas de Aprobados</h1>
+    <label for="tipoGrafico">Selecciona el tipo de gráfico:</label>
+    <select id="tipoGrafico">
+        <option value="bar">Barra</option>
+        <option value="line">Línea</option>
+        <option value="pie">Pie</option>
+        <option value="doughnut">Dona</option>
+    </select>
     <canvas id="graficoAprobados"></canvas>
 
     <script>
-        async function cargarGrafico() {
+        let chart;
+
+        async function cargarGrafico(tipo = 'bar') {
             const respuesta = await fetch('http://localhost:3000/estadisticas');
             const datos = await respuesta.json();
 
-            new Chart(document.getElementById('graficoAprobados'), {
-                type: 'bar',
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = new Chart(document.getElementById('graficoAprobados'), {
+                type: tipo,
                 data: {
                     labels: datos.map(d => d.nombre),
                     datasets: [{
@@ -41,6 +54,10 @@
                 }
             });
         }
+
+        document.getElementById('tipoGrafico').addEventListener('change', function() {
+            cargarGrafico(this.value);
+        });
 
         cargarGrafico();
     </script>

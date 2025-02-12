@@ -1,26 +1,15 @@
+// Importar módulos necesarios
 const express = require('express');
 const mysql = require('mysql');
-const cors = require('cors');
-
+const bodyParser = require('body-parser');
 const app = express();
-app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(express.static('public'));
+const db = require('./database');
 
-// Configuración de la base de datos
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'formacion'
-});
 
-db.connect(err => {
-    if (err) throw err;
-    console.log('Conectado a la base de datos MySQL');
-});
 
-// Obtener todos los cursos
+// Ruta para obtener listado de cursos
 app.get('/cursos', (req, res) => {
     db.query('SELECT * FROM cursos', (err, results) => {
         if (err) throw err;
@@ -28,7 +17,7 @@ app.get('/cursos', (req, res) => {
     });
 });
 
-// Obtener todos los centros
+// Ruta para obtener listado de centros
 app.get('/centros', (req, res) => {
     db.query('SELECT * FROM centros', (err, results) => {
         if (err) throw err;
@@ -36,7 +25,7 @@ app.get('/centros', (req, res) => {
     });
 });
 
-// Obtener alumnos de un curso
+// Ruta para obtener alumnos por curso
 app.get('/alumnos/:cursoId', (req, res) => {
     const { cursoId } = req.params;
     db.query('SELECT * FROM alumnos WHERE curso_id = ?', [cursoId], (err, results) => {
@@ -45,12 +34,23 @@ app.get('/alumnos/:cursoId', (req, res) => {
     });
 });
 
-// Eliminar alumno
+// Ruta para eliminar alumno
 app.delete('/alumnos/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM alumnos WHERE id = ?', [id], (err, results) => {
         if (err) throw err;
         res.json({ message: 'Alumno eliminado correctamente' });
+    });
+});
+
+// Ruta para actualizar información de un curso
+app.put('/cursos/:id', (req, res) => {
+    const { id } = req.params;
+    const { nombre, descripcion, nivel, lugar } = req.body;
+    db.query('UPDATE cursos SET nombre = ?, descripcion = ?, nivel = ?, lugar = ? WHERE id = ?', 
+    [nombre, descripcion, nivel, lugar, id], (err, results) => {
+        if (err) throw err;
+        res.json({ message: 'Curso actualizado correctamente' });
     });
 });
 
@@ -62,7 +62,7 @@ app.get('/estadisticas', (req, res) => {
     });
 });
 
-// Iniciar el servidor
+// Iniciar servidor
 app.listen(3000, () => {
-    console.log('Servidor ejecutándose en http://localhost:3000');
+    console.log('Servidor en ejecución en http://localhost:3000');
 });
