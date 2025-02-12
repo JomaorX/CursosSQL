@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Curso</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="centros.html">🏫 Centros</a></li>
+            <li><a href="alumnos.html">👨‍🎓 Alumnos</a></li>
+            <li><a href="estadisticas.html">📊 Estadísticas</a></li>
+            <li><a href="editar_curso.html?id=1">✏️ Editar Curso</a></li>
+        </ul>
+    </nav>
+    
+    <h1>Editar Curso</h1>
+    <form id="formEditarCurso">
+        <input type="hidden" id="cursoId">
+        <label>Nombre: <input type="text" id="nombre"></label><br>
+        <label>Descripción: <input type="text" id="descripcion"></label><br>
+        <label>Nivel: <input type="text" id="nivel"></label><br>
+        <label>Lugar: <input type="text" id="lugar"></label><br>
+        <button type="submit">Actualizar</button>
+    </form>
+
+    <script>
+        async function cargarCurso() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            const respuesta = await fetch(`http://localhost:3000/cursos/${id}`);
+            const curso = await respuesta.json();
+            document.getElementById('cursoId').value = curso.id;
+            document.getElementById('nombre').value = curso.nombre;
+            document.getElementById('descripcion').value = curso.descripcion;
+            document.getElementById('nivel').value = curso.nivel;
+            document.getElementById('lugar').value = curso.lugar;
+        }
+
+        document.getElementById('formEditarCurso').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const id = document.getElementById('cursoId').value;
+            await fetch(`http://localhost:3000/cursos/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: document.getElementById('nombre').value,
+                    descripcion: document.getElementById('descripcion').value,
+                    nivel: document.getElementById('nivel').value,
+                    lugar: document.getElementById('lugar').value
+                })
+            });
+            alert('Curso actualizado');
+            window.location.href = 'index.html';
+        });
+
+        cargarCurso();
+    </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Alumnos por Curso</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="centros.html">🏫 Centros</a></li>
+            <li><a href="alumnos.html">👨‍🎓 Alumnos</a></li>
+            <li><a href="estadisticas.html">📊 Estadísticas</a></li>
+            <li><a href="editar_curso.html?id=1">✏️ Editar Curso</a></li>
+        </ul>
+    </nav>
+    
+    <h1>Alumnos Matriculados</h1>
+    <select id="seleccionarCurso"></select>
+    <ul id="listaAlumnos"></ul>
+
+    <script>
+        async function cargarCursos() {
+            const respuesta = await fetch('http://localhost:3000/cursos');
+            const cursos = await respuesta.json();
+            const select = document.getElementById('seleccionarCurso');
+            cursos.forEach(curso => {
+                let option = document.createElement('option');
+                option.value = curso.id;
+                option.textContent = curso.nombre;
+                select.appendChild(option);
+            });
+        }
+
+        async function cargarAlumnos(cursoId) {
+            const respuesta = await fetch(`http://localhost:3000/alumnos/${cursoId}`);
+            const alumnos = await respuesta.json();
+            document.getElementById('listaAlumnos').innerHTML = alumnos.map(a => 
+                `<li>${a.nombre} (${a.aprobado ? "Aprobado" : "Reprobado"}) 
+                <button onclick="eliminarAlumno(${a.id})">Eliminar</button></li>`
+            ).join('');
+        }
+
+        async function eliminarAlumno(id) {
+            await fetch(`http://localhost:3000/alumnos/${id}`, { method: 'DELETE' });
+            alert('Alumno eliminado');
+            cargarAlumnos(document.getElementById('seleccionarCurso').value);
+        }
+
+        document.getElementById('seleccionarCurso').addEventListener('change', function() {
+            cargarAlumnos(this.value);
+        });
+
+        cargarCursos();
+    </script>
+</body>
+</html>

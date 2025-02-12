@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estadísticas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="centros.html">🏫 Centros</a></li>
+            <li><a href="alumnos.html">👨‍🎓 Alumnos</a></li>
+            <li><a href="estadisticas.html">📊 Estadísticas</a></li>
+            <li><a href="editar_curso.html?id=1">✏️ Editar Curso</a></li>
+        </ul>
+    </nav>
+    
+    <h1>Estadísticas de Aprobados</h1>
+    <canvas id="graficoAprobados"></canvas>
+
+    <script>
+        async function cargarGrafico() {
+            const respuesta = await fetch('http://localhost:3000/estadisticas');
+            const datos = await respuesta.json();
+
+            new Chart(document.getElementById('graficoAprobados'), {
+                type: 'bar',
+                data: {
+                    labels: datos.map(d => d.nombre),
+                    datasets: [{
+                        label: 'Aprobados',
+                        data: datos.map(d => d.aprobados),
+                        backgroundColor: 'green'
+                    }, {
+                        label: 'Total',
+                        data: datos.map(d => d.total),
+                        backgroundColor: 'blue'
+                    }]
+                }
+            });
+        }
+
+        cargarGrafico();
+    </script>
+</body>
+</html>

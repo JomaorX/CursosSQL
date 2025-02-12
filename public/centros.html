@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Inicio - Cursos</title>
+    <title>Centros</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -16,8 +16,15 @@
         </ul>
     </nav>
     
-    <h1>Cursos Disponibles</h1>
-    <ul id="cursos"></ul>
-    <script src="script.js"></script>
+    <h1>Centros de Formación</h1>
+    <ul id="centros"></ul>
+    <script>
+        async function cargarCentros() {
+            const respuesta = await fetch('http://localhost:3000/centros');
+            const centros = await respuesta.json();
+            document.getElementById('centros').innerHTML = centros.map(c => `<li>${c.nombre} - ${c.direccion}</li>`).join('');
+        }
+        cargarCentros();
+    </script>
 </body>
 </html>
