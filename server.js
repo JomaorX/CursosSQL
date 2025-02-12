@@ -6,7 +6,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.static('public'));
 const db = require('./database');
-
+const PORT = process.env.PORT || 3000; //3000 para local
 
 
 // Ruta para obtener listado de cursos
@@ -63,6 +63,6 @@ app.get('/estadisticas', (req, res) => {
 });
 
 // Iniciar servidor
-app.listen(3000, () => {
-    console.log('Servidor en ejecución en http://localhost:3000');
+app.listen(PORT , () => {
+    console.log(`Servidor en ejecución en http://localhost:${PORT}`);
 });

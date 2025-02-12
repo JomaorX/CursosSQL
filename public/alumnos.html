@@ -22,7 +22,7 @@
 
     <script>
         async function cargarCursos() {
-            const respuesta = await fetch('http://localhost:3000/cursos');
+            const respuesta = await fetch(`/cursos`);
             const cursos = await respuesta.json();
             const select = document.getElementById('seleccionarCurso');
             cursos.forEach(curso => {
@@ -34,7 +34,7 @@
         }
 
         async function cargarAlumnos(cursoId) {
-            const respuesta = await fetch(`http://localhost:3000/alumnos/${cursoId}`);
+            const respuesta = await fetch(`/alumnos/${cursoId}`);
             const alumnos = await respuesta.json();
             document.getElementById('listaAlumnos').innerHTML = alumnos.map(a => 
                 `<li>${a.nombre} (${a.aprobado ? "Aprobado" : "Reprobado"}) 
@@ -43,7 +43,7 @@
         }
 
         async function eliminarAlumno(id) {
-            await fetch(`http://localhost:3000/alumnos/${id}`, { method: 'DELETE' });
+            await fetch(`/alumnos/${id}`, { method: 'DELETE' });
             alert('Alumno eliminado');
             cargarAlumnos(document.getElementById('seleccionarCurso').value);
         }

@@ -35,7 +35,7 @@
 
         async function cargarGrafico(tipo = 'bar') {
             try {
-                const respuesta = await fetch('http://localhost:3000/estadisticas');
+                const respuesta = await fetch(`/estadisticas`);
                 const datos = await respuesta.json();
 
                 if (chart) {

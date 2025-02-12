@@ -20,7 +20,7 @@
     <ul id="centros"></ul>
     <script>
         async function cargarCentros() {
-            const respuesta = await fetch('http://localhost:3000/centros');
+            const respuesta = await fetch(`/centros`);
             const centros = await respuesta.json();
             document.getElementById('centros').innerHTML = centros.map(c => `<li>${c.nombre} - ${c.direccion}</li>`).join('');
         }

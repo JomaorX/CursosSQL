@@ -30,7 +30,7 @@
         async function cargarCurso() {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
-            const respuesta = await fetch(`http://localhost:3000/cursos/${id}`);
+            const respuesta = await fetch(`/cursos/${id}`);
             const curso = await respuesta.json();
             document.getElementById('cursoId').value = curso.id;
             document.getElementById('nombre').value = curso.nombre;
@@ -42,7 +42,7 @@
         document.getElementById('formEditarCurso').addEventListener('submit', async function(event) {
             event.preventDefault();
             const id = document.getElementById('cursoId').value;
-            await fetch(`http://localhost:3000/cursos/${id}`, {
+            await fetch(`/cursos/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
