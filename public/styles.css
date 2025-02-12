@@ -90,5 +90,12 @@ input {
 }
 
 canvas {
-    margin-top: 20px;
+    margin-top: 10px;
+}
+
+.centrar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 500px;
 }

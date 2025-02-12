@@ -25,40 +25,118 @@
         <option value="pie">Pie</option>
         <option value="doughnut">Dona</option>
     </select>
-    <canvas id="graficoAprobados"></canvas>
+    <div class="centrar">
+        <canvas id="graficoAprobados"></canvas>
+    </div>
+    
 
     <script>
         let chart;
 
         async function cargarGrafico(tipo = 'bar') {
-            const respuesta = await fetch('http://localhost:3000/estadisticas');
-            const datos = await respuesta.json();
+            try {
+                const respuesta = await fetch('http://localhost:3000/estadisticas');
+                const datos = await respuesta.json();
 
-            if (chart) {
-                chart.destroy();
-            }
-
-            chart = new Chart(document.getElementById('graficoAprobados'), {
-                type: tipo,
-                data: {
-                    labels: datos.map(d => d.nombre),
-                    datasets: [{
-                        label: 'Aprobados',
-                        data: datos.map(d => d.aprobados),
-                        backgroundColor: 'green'
-                    }, {
-                        label: 'Total',
-                        data: datos.map(d => d.total),
-                        backgroundColor: 'blue'
-                    }]
+                if (chart) {
+                    chart.destroy(); // Destruye el gráfico anterior si existe
                 }
-            });
+
+                const ctx = document.getElementById('graficoAprobados').getContext('2d');
+
+                // Degradado para el fondo de las barras
+                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, 'rgba(75, 192, 192, 0.8)'); // Verde claro
+                gradient.addColorStop(1, 'rgba(75, 192, 192, 0.2)'); // Verde más transparente
+
+                chart = new Chart(ctx, {
+                    type: tipo,
+                    data: {
+                        labels: datos.map(d => d.nombre),
+                        datasets: [{
+                            label: 'Aprobados',
+                            data: datos.map(d => d.aprobados),
+                            backgroundColor: gradient, // Usar degradado
+                            borderColor: 'rgba(75, 192, 192, 1)', // Borde verde
+                            borderWidth: 2,
+                            borderRadius: 5, // Bordes redondeados en las barras
+                            hoverBackgroundColor: 'rgba(75, 192, 192, 1)', // Color al pasar el mouse
+                        }, {
+                            label: 'Total',
+                            data: datos.map(d => d.total),
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)', // Azul semitransparente
+                            borderColor: 'rgba(54, 162, 235, 1)', // Borde azul
+                            borderWidth: 2,
+                            borderRadius: 5,
+                            hoverBackgroundColor: 'rgba(54, 162, 235, 1)', // Color al pasar el mouse
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        animation: {
+                            duration: 1500, // Duración de la animación
+                            easing: 'easeInOutQuart', // Tipo de animación
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top', // Posición de la leyenda
+                                labels: {
+                                    font: {
+                                        size: 14, // Tamaño de la fuente de la leyenda
+                                    },
+                                },
+                            },
+                            title: {
+                                display: true,
+                                text: 'Estadísticas de Aprobados', // Título del gráfico
+                                font: {
+                                    size: 18, // Tamaño de la fuente del título
+                                },
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)', // Fondo del tooltip
+                                titleColor: 'white', // Color del título del tooltip
+                                bodyColor: 'white', // Color del cuerpo del tooltip
+                                borderColor: 'rgba(75, 192, 192, 1)', // Borde del tooltip
+                                borderWidth: 1,
+                                cornerRadius: 5,
+                            },
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false, // Ocultar líneas de la cuadrícula en el eje X
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 14, // Tamaño de la fuente en el eje X
+                                    },
+                                },
+                            },
+                            y: {
+                                grid: {
+                                    color: 'rgba(200, 200, 200, 0.2)', // Color de las líneas de la cuadrícula en el eje Y
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 14, // Tamaño de la fuente en el eje Y
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            } catch (error) {
+                console.error('Error al cargar el gráfico:', error);
+            }
         }
 
+        // Cambiar el tipo de gráfico al seleccionar una opción
         document.getElementById('tipoGrafico').addEventListener('change', function() {
             cargarGrafico(this.value);
         });
 
+        // Cargar el gráfico inicial
         cargarGrafico();
     </script>
 </body>
